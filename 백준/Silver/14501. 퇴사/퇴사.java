@@ -1,66 +1,53 @@
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.io.*;
 
 public class Main {
-	
-	static class Sangdam {
-		int T, P; // 완료하는데 걸리는 기간, 상담료
 
-		Sangdam(int t, int p) {
-			T = t;
-			P = p;
-		}	
-	}
-	
-	static int N;
-	static Sangdam[] arr;
-	static int max = 0; // 최대 이익
-	
-	public static void main(String[] args) throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		
-		N = Integer.parseInt(br.readLine());
-		arr = new Sangdam[N];
-		
-		for (int i=0; i<N; i++) {
-			StringTokenizer st = new StringTokenizer(br.readLine());
-			
-			int t = Integer.parseInt(st.nextToken());
-			int p = Integer.parseInt(st.nextToken());
-			
-			arr[i] = new Sangdam(t, p);
-		}
-		
-		getMax(0, 0);
-		
-		System.out.println(max);
-	}
+    static class Sangdam {
+        int T; // 걸리는 기간
+        int P; // 비용
 
-	
-	// d : 몇번째 날인지(arr idx) / sum : 지금까지의 수익 
-	static void getMax(int d, int sum) {
-		// d == N-1 -> arr[d].T == 1 일때는 상담하고 sum값 업데이트 하고 리턴
-		// d == N -> 바로 리턴?
-		// d > N -> 불가능~
-		
-		if (d >= N-1) {
-			if (d == N-1 && arr[d].T == 1) {
-				sum += arr[d].P;
-			}
-			max = Math.max(max, sum);
-			return;
-		}
-		
-		// 오늘 상담 할거다~
-		int nextSum = sum+arr[d].P;
-		int nextD = d+arr[d].T;
-		if (nextD <= N) {
-			getMax(nextD, nextSum);
-		}
-		// 안할거야~
-		getMax(d+1, sum);
+        Sangdam(int T, int P) {
+            this.T = T;
+            this.P = P;
+        }
+    }
 
-	}
+    static int N;
+    static Sangdam[] sdArr;
+    static int max = 0;
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        N = Integer.parseInt(br.readLine());
+        sdArr = new Sangdam[N];
+
+        for (int i=0; i<N; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int t = Integer.parseInt(st.nextToken());
+            int p = Integer.parseInt(st.nextToken());
+            sdArr[i] = new Sangdam(t, p);
+        }
+
+        dfs(0, 0);
+
+        System.out.println(max);
+    }
+
+    // n : idx, p : 비용
+    static void dfs(int n, int p) {
+        if (n >= N-1) {
+            if (n == N-1 && sdArr[n].T == 1) {
+                p += sdArr[n].P;
+            }
+            max = Math.max(max, p);
+            return;
+        }
+
+        if (sdArr[n].T <= N-n) {
+            dfs(n+sdArr[n].T, p+sdArr[n].P);
+        }
+        dfs(n+1, p);
+    }
 }
